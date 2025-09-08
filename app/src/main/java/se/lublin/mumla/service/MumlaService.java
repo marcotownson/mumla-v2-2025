@@ -607,9 +607,11 @@ public class MumlaService extends HumlaService implements
      */
     @Override
     public void onTalkKeyDown() {
+        Log.d(TAG, "onTalkKeyDown received.");
         if(isConnectionEstablished()
                 && Settings.ARRAY_INPUT_METHOD_PTT.equals(mSettings.getInputMethod())) {
             if (!mSettings.isPushToTalkToggle() && !isTalking()) {
+                Log.d(TAG, "Starting talk state.");
                 setTalkingState(true); // Start talking
             }
         }
@@ -621,11 +623,14 @@ public class MumlaService extends HumlaService implements
      */
     @Override
     public void onTalkKeyUp() {
+        Log.d(TAG, "onTalkKeyUp received.");
         if(isConnectionEstablished()
                 && Settings.ARRAY_INPUT_METHOD_PTT.equals(mSettings.getInputMethod())) {
             if (mSettings.isPushToTalkToggle()) {
+                Log.d(TAG, "Toggling talk state.");
                 setTalkingState(!isTalking()); // Toggle talk state
             } else if (isTalking()) {
+                Log.d(TAG, "Stopping talk state.");
                 setTalkingState(false); // Stop talking
             }
         }
