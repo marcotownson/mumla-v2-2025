@@ -1,8 +1,10 @@
 package se.lublin.mumla.service;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,6 +17,7 @@ public class PttAccessibilityService extends AccessibilityService implements Sha
 
     private static final String TAG = "PttAccessibilityService";
     private int pttKeyCode;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     public void onCreate() {
@@ -23,6 +26,10 @@ public class PttAccessibilityService extends AccessibilityService implements Sha
         preferences.registerOnSharedPreferenceChangeListener(this);
         loadPttKey(preferences);
         Log.d(TAG, "PTT Accessibility Service created. PTT KeyCode: " + pttKeyCode);
+
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Mumla::PttWakeLock");
+        wakeLock.acquire();
     }
 
     @Override
@@ -30,6 +37,9 @@ public class PttAccessibilityService extends AccessibilityService implements Sha
         super.onDestroy();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.unregisterOnSharedPreferenceChangeListener(this);
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+        }
     }
 
     private void loadPttKey(SharedPreferences sharedPreferences) {

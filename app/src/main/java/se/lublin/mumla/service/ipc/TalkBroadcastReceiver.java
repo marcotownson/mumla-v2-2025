@@ -20,7 +20,6 @@ package se.lublin.mumla.service.ipc;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import se.lublin.mumla.service.IMumlaService;
 import se.lublin.humla.IHumlaSession;
@@ -44,16 +43,12 @@ public class TalkBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("TalkBroadcastReceiver", "onReceive called with intent: " + intent);
         if (BROADCAST_TALK.equals(intent.getAction())) {
-            if (!mService.isConnected()) {
-                Log.d("TalkBroadcastReceiver", "Service not connected, ignoring broadcast.");
+            if (!mService.isConnected())
                 return;
-            }
 
             if (intent.hasExtra(EXTRA_TALK_STATE)) {
                 boolean talkState = intent.getBooleanExtra(EXTRA_TALK_STATE, false);
-                Log.d("TalkBroadcastReceiver", "Received talk state: " + talkState);
                 if (talkState) {
                     mService.onTalkKeyDown();
                 } else {
